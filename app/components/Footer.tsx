@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion, Variants } from 'framer-motion';
 import { 
   Phone, Mail, MapPin, ChevronRight, 
   Facebook, Twitter, Linkedin, Instagram,
@@ -24,23 +24,32 @@ const footerLinks = [
 ];
 
 export default function ModernFooter() {
-  const containerVariants = {
+  // Explicitly typed variants to pass TypeScript validation on Vercel
+  const containerVariants: Variants = {
     hidden: { opacity: 0, y: 50 },
     visible: { 
       opacity: 1, 
       y: 0,
-      transition: { staggerChildren: 0.1, duration: 0.8, ease: "easeOut" }
+      transition: { 
+        staggerChildren: 0.1, 
+        duration: 0.8, 
+        ease: [0.25, 0.46, 0.45, 0.94] 
+      }
     }
   };
 
-  const itemVariants = {
+  const itemVariants: Variants = {
     hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0 }
+    visible: { 
+        opacity: 1, 
+        y: 0,
+        transition: { ease: "easeOut" as const } 
+    }
   };
 
   return (
     <footer className="relative bg-[#050505] pt-24 pb-12 overflow-hidden text-white font-sans border-t border-white/5">
-      {/* Background Aura */}
+      {/* Background Aura - Decorative Blur Effects */}
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-purple-600/5 blur-[120px] rounded-full pointer-events-none" />
       <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-600/5 blur-[120px] rounded-full pointer-events-none" />
 

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, Variants } from 'framer-motion';
 import { Layout, Server, Database, Cloud } from 'lucide-react';
 
 const techGroups = [
@@ -49,22 +49,22 @@ const techGroups = [
 export default function TechStack() {
   const [activeTab, setActiveTab] = useState('frontend');
 
-  // Animation Variants
-  const containerVariants = {
+  // Explicitly typed Variants to prevent Vercel build errors
+  const containerVariants: Variants = {
     hidden: { opacity: 0 },
     show: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.15, // Creates the left-to-right sequence
+        staggerChildren: 0.1,
       }
     }
   };
 
-  const itemVariants = {
+  const itemVariants: Variants = {
     hidden: { 
       opacity: 0, 
-      x: -100, // Starts off-screen to the left
-      scale: 0.8 
+      x: -30, 
+      scale: 0.95 
     },
     show: { 
       opacity: 1, 
@@ -73,20 +73,26 @@ export default function TechStack() {
       transition: {
         type: "spring",
         stiffness: 100,
-        damping: 12
+        damping: 15,
+        ease: "easeOut" as const // Added 'as const' to satisfy TypeScript
       }
     }
   };
 
   return (
-    <section className="py-24 bg-[#140429] min-h-screen text-white font-sans overflow-hidden">
+    <section className="py-24 bg-[#050505] min-h-screen text-white font-sans overflow-hidden border-t border-white/5">
       <div className="max-w-7xl mx-auto px-6">
         
         {/* Header */}
         <div className="text-center mb-16">
-          <h2 className="text-5xl font-black tracking-tighter mb-4 italic text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-500">
+          <motion.h2 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-5xl font-black tracking-tighter mb-4 italic text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-500 uppercase"
+          >
             TECHNOLOGY STACK
-          </h2>
+          </motion.h2>
           <div className="w-20 h-1 bg-blue-600 mx-auto rounded-full"></div>
         </div>
 
@@ -96,9 +102,9 @@ export default function TechStack() {
             <button
               key={group.id}
               onClick={() => setActiveTab(group.id)}
-              className={`flex items-center gap-3 px-8 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 border ${
+              className={`flex items-center gap-3 px-8 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all duration-500 border ${
                 activeTab === group.id 
-                ? 'bg-white text-black border-white shadow-xl scale-110' 
+                ? 'bg-white text-black border-white shadow-[0_0_30px_rgba(255,255,255,0.2)] scale-105' 
                 : 'bg-white/5 text-white border-white/10 hover:bg-white/10'
               }`}
             >
@@ -109,7 +115,7 @@ export default function TechStack() {
         </div>
 
         {/* Animated Grid */}
-        <div className="relative">
+        <div className="relative min-h-[500px]">
           <AnimatePresence mode="wait">
             <motion.div
               key={activeTab}
@@ -119,28 +125,28 @@ export default function TechStack() {
               exit="hidden"
               className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
             >
-              {techGroups.find(g => g.id === activeTab)?.content.map((tech, idx) => (
+              {techGroups.find(g => g.id === activeTab)?.content.map((tech) => (
                 <motion.div
                   key={tech.name}
                   variants={itemVariants}
-                  whileHover={{ y: -10, transition: { duration: 0.2 } }}
-                  className={`relative group h-44 rounded-[2.5rem] p-8 overflow-hidden bg-gradient-to-br ${tech.gradient} shadow-2xl`}
+                  whileHover={{ y: -8, transition: { duration: 0.2 } }}
+                  className={`relative group h-48 rounded-[2rem] p-8 overflow-hidden bg-gradient-to-br ${tech.gradient} shadow-2xl`}
                 >
                   {/* Watermark Logo */}
-                  <div className="absolute top-2 right-4 text-7xl font-black text-black/10 select-none group-hover:scale-110 group-hover:rotate-12 transition-transform duration-500">
+                  <div className="absolute top-2 right-4 text-7xl font-black text-black/10 select-none group-hover:scale-110 group-hover:rotate-6 transition-transform duration-700">
                     {tech.logo}
                   </div>
 
                   <div className="relative z-10 h-full flex flex-col justify-between">
                     <div>
-                      <h3 className="text-xl font-black mb-1 drop-shadow-md">{tech.name}</h3>
-                      <p className="text-[10px] leading-relaxed text-white/90 font-bold max-w-[180px] uppercase tracking-wide">
+                      <h3 className="text-xl font-black mb-1 drop-shadow-md uppercase tracking-tight">{tech.name}</h3>
+                      <p className="text-[10px] leading-relaxed text-white/90 font-bold max-w-[200px] uppercase tracking-wide opacity-80">
                         {tech.desc}
                       </p>
                     </div>
 
-                    <button className="w-fit px-6 py-2 bg-white text-black text-[9px] font-black uppercase tracking-tighter rounded-full shadow-lg transform transition-transform group-hover:scale-105">
-                      Learn More
+                    <button className="w-fit px-6 py-2 bg-white/20 hover:bg-white backdrop-blur-md text-white hover:text-black text-[9px] font-black uppercase tracking-widest rounded-full transition-all duration-300">
+                      Explore Stack
                     </button>
                   </div>
                 </motion.div>
@@ -149,10 +155,10 @@ export default function TechStack() {
           </AnimatePresence>
         </div>
 
-        {/* Custom Scroll Bar / Indicator */}
-        <div className="mt-20 flex justify-center items-center gap-2">
+        {/* Tab Indicator */}
+        <div className="mt-20 flex justify-center items-center gap-3">
            {techGroups.map(g => (
-             <div key={g.id} className={`h-1 rounded-full transition-all duration-500 ${activeTab === g.id ? 'w-12 bg-blue-500' : 'w-4 bg-white/20'}`} />
+             <div key={g.id} className={`h-1.5 rounded-full transition-all duration-700 ${activeTab === g.id ? 'w-16 bg-blue-500' : 'w-4 bg-white/10'}`} />
            ))}
         </div>
       </div>
